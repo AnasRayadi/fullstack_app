@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axiosInstanse from "../../api/axios";
-
+// import {useForm} from 'react-hook-form'
 const LoginForm = () => {
+
+  // const {register, handleSubmit, formState: { errors }} = useForm();
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
@@ -112,7 +115,7 @@ const LoginForm = () => {
           <Link
             to={"/register"}
             className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            href="/signup"
+            // href="/signup"
           >
             Create an account
           </Link>

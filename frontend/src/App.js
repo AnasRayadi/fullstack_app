@@ -1,22 +1,17 @@
-import {
-  Route,
-  BrowserRouter as Router,
-  RouterProvider,
-  Routes,
-  createBrowserRouter,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./layout/app-root";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Books ,{loader as booksLoader} from "./pages/Books";
+import Books from "./pages/Books";
 import BookLayout from "./layout/book-root";
 import NewBook from "./pages/NewBook";
 import BookDetails, { loader as bookDetailsLoader } from "./pages/BookDetais";
 import BookEdit from "./pages/BookEdit";
 import Unauthorized from "./pages/Unauthorized";
 import RequireAuth from "./components/requireAuth/RequireAuth";
-import {action as bookAction} from './components/book/BookForm'
+// import {action as bookAction} from './components/book/BookForm'
+import Test from "./pages/Test";
 const route = createBrowserRouter([
   {
     path: "/",
@@ -28,6 +23,7 @@ const route = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "unauthorized", element: <Unauthorized /> },
+      { path: "test", element: <Test /> },
       {
         element: <RequireAuth allowedRoles={["ROLE_ADMIN", "ROLE_USER"]} />,
         children: [
@@ -36,17 +32,25 @@ const route = createBrowserRouter([
             path: "books",
             element: <BookLayout />,
             children: [
-              { index: true, element: <Books />, loader: booksLoader },
+              { index: true, element: <Books /> },
               {
                 path: ":bookId",
                 id: "book-details",
                 loader: bookDetailsLoader,
                 children: [
                   { index: true, element: <BookDetails /> },
-                  { path: "edit", element: <BookEdit />, action:bookAction},
+                  {
+                    path: "edit",
+                    element: <BookEdit />,
+                    // , action: bookAction
+                  },
                 ],
               },
-              { path: "new", element: <NewBook />, action:bookAction },
+              {
+                path: "new",
+                element: <NewBook />,
+                // , action:bookAction
+              },
             ],
           },
         ],
@@ -57,6 +61,7 @@ const route = createBrowserRouter([
 function App() {
   return (
     <RouterProvider router={route} />
+
     // <Router>
     //   <Routes>
     //     <Route path={"/"} element={<AppLayout />}>

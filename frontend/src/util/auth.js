@@ -21,7 +21,8 @@ export function extractRoles(token){
       // parse the decoded string as a JSON object
       let parsed = JSON.parse(decoded);
       // return the role property of the object
-      console.log(parsed.roles);
+      // console.log(parsed.roles);
       return parsed.roles;
       }
     };
+    

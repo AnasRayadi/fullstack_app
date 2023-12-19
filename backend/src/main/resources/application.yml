@@ -1,1 +1,36 @@
 
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5332/backend
+    ### docker ###
+    #username: springsecurity
+    #password: password
+
+    ### pgAdmin ###
+    username: postgres
+    password: adminpass
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  main:
+    web-application-type: servlet
+
+application:
+  security:
+    jwt:
+      secret-key: 2b8a83e2c7eeb4b772337d9e781d9f2ff82e37be31d0b3d0c92d5bf7c3b30d52
+      expiration: 30000 #86400000  => a day | 60000 => one minute
+      refresh-token:
+        expiration: 604800000 # 7 days
+

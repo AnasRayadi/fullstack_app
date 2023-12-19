@@ -1,11 +1,11 @@
 import React from "react";
-import BookForm from "../components/book/BookForm";
+import NewBookForm from "../components/book/NewBookForm";
 
 const NewBook = () => {
   return (
     <>
       <h1 className="text-white">new book page !</h1>
-      <BookForm method='post'/>
+      <NewBookForm />
     </>
   );
 };

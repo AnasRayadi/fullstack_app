@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import axiosInstanse from "../api/axios";
 import BooksTable from "../components/book/BookTable";
-import { useLoaderData} from "react-router";
+// import { useLoaderData} from "react-router";
 import api from "../api/axiosInterceptors";
 // const DUMMY_BOOKS = [
 //   {
@@ -47,20 +46,21 @@ import api from "../api/axiosInterceptors";
 // ];
 
 const Books = () => {
-  const data = useLoaderData()
-  console.log(data.booksData);
-  const books = data.booksData;
+  // const data = useLoaderData()
+  // console.log(data.booksData);
+  // const books = data.booksData;
   
   // const books = data.booksData;
-  // const [books, setBooks ] = useState([])
-  // useEffect(()=>{
-  //   const fetchBooks = async () => {
-  //     const res = await api.get("/books");
-  //     const booksData = await res.data;
-  //     setBooks(booksData)
-  //   }
-  //   fetchBooks()
-  // },[])
+  const [books, setBooks ] = useState([])
+  useEffect(()=>{
+    const fetchBooks = async () => {
+      const res = await api.get("/books");
+      const booksData = await res.data;
+      setBooks(booksData)
+      console.log(booksData);
+    }
+    fetchBooks()
+  },[])
   
   return (
     <>
@@ -73,9 +73,9 @@ const Books = () => {
 };
 export default Books;
 
-export const loader = async () => {
-  const res = await api.get("/books");
-  const booksData = await res.data;
-  console.log(booksData);
-  return {booksData};
-};
+// export const loader = async () => {
+//   const res = await api.get("/books");
+//   const booksData = await res.data;
+//   console.log(booksData);
+//   return {booksData};
+// };
