@@ -15,5 +15,6 @@ public class AddBookRequest {
     private String description;
     private String image;
     private LocalDate edition;
+    private Integer categoryId;
 }
 

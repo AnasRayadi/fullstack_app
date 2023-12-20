@@ -27,7 +27,7 @@ public class BookService {
         return bookRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Book with id [%s] not found".formatted(id)));
     }
     public Book addBook(AddBookRequest request) {
-        if (request.getTitle() != null && request.getAuthor() != null && request.getDescription() != null && request.getImage() != null && request.getEdition() != null) {
+        if (request.getTitle() != null && request.getAuthor() != null && request.getDescription() != null && request.getImage() != null && request.getEdition() != null && request.getCategoryId() != null) {
             if (bookRepo.existsByTitle(request.getTitle())){
                 throw new DuplicateResourceException("Book with title [%s] already exists".formatted(request.getTitle()));
             }
