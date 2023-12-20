@@ -1,6 +1,7 @@
 package com.rayadi.backend.service;
 
 import com.rayadi.backend.dto.AddBookRequest;
+import com.rayadi.backend.dto.FilterBooksByDateRequest;
 import com.rayadi.backend.exception.DuplicateResourceException;
 import com.rayadi.backend.exception.RequestValidationException;
 import com.rayadi.backend.exception.ResourceNotFoundException;
@@ -9,6 +10,8 @@ import com.rayadi.backend.repository.BookRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,5 +83,8 @@ public class BookService {
             throw new ResourceNotFoundException("Book with id [%s] not found".formatted(id));
         }
     }
-
+    public List<Book> getBooksByEdition(FilterBooksByDateRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return bookRepo.findByEditionBetween(LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter));
+    }
 }

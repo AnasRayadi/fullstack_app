@@ -4,7 +4,9 @@ import NewBookForm from "../components/book/NewBookForm";
 const NewBook = () => {
   return (
     <>
-      <h1 className="text-white">new book page !</h1>
+      <div className="flex justify-center items-center mt-6">
+        <h1 className="text-white">New book page !</h1>
+      </div>
       <NewBookForm />
     </>
   );

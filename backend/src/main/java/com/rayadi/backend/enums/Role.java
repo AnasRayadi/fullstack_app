@@ -1,5 +1,6 @@
-package com.rayadi.backend.model;
+package com.rayadi.backend.enums;
 
+import com.rayadi.backend.enums.Permission;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.rayadi.backend.model.Permission.*;
+import static com.rayadi.backend.enums.Permission.*;
 
 @RequiredArgsConstructor
 public enum Role {

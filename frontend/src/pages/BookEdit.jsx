@@ -8,8 +8,10 @@ const BookEdit = () => {
   // console.log(book);
   return (
     <>
-      <h1 className="text-white">Book Edit Page</h1>
-      <EditBookForm/>
+      <div className="flex justify-center items-center mt-6">
+        <h1 className="text-white">Edit Book Page!</h1>
+      </div>
+      <EditBookForm />
     </>
   );
 };

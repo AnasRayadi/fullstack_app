@@ -1,6 +1,7 @@
 package com.rayadi.backend.controller;
 
 import com.rayadi.backend.dto.AddBookRequest;
+import com.rayadi.backend.dto.FilterBooksByDateRequest;
 import com.rayadi.backend.model.Book;
 import com.rayadi.backend.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,10 @@ public class BookController {
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
         return ResponseEntity.ok(bookService.getAllBooks());
+    }
+    @PostMapping("/filter")
+    public ResponseEntity<List<Book>> filterBooksByDate(@RequestBody FilterBooksByDateRequest request) {
+        return ResponseEntity.ok(bookService.getBooksByEdition(request));
     }
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody AddBookRequest request) {

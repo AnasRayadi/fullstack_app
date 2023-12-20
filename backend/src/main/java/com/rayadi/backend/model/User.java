@@ -1,5 +1,6 @@
 package com.rayadi.backend.model;
 
+import com.rayadi.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

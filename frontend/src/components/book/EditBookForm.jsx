@@ -39,7 +39,7 @@ const EditBookForm = () => {
     } catch (error) {
         console.error(error);
     }
-    // navigate("..");
+    navigate("/books");
   }
 
 
@@ -69,7 +69,7 @@ const EditBookForm = () => {
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="Enter book title"
         />
-        <p className="text-red-500 italic">{errors?.title?.message}</p>
+        <p className="text-red-500 italic">{errors.title?.message}</p>
         
       </div>
       <div className="mb-4">

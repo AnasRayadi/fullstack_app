@@ -1,4 +1,4 @@
-package com.rayadi.backend.model;
+package com.rayadi.backend.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

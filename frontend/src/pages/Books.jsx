@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import BooksTable from "../components/book/BookTable";
 // import { useLoaderData} from "react-router";
 import api from "../api/axiosInterceptors";
+import EditionDateFilter from "../components/BookFilter/EditionDateFilter";
 // const DUMMY_BOOKS = [
 //   {
 //     id: "b1",
@@ -62,11 +63,16 @@ const Books = () => {
     fetchBooks()
   },[])
   
+  const filterHandler = (filteredBooks) => {
+    setBooks(filteredBooks);
+  };
+
   return (
     <>
-      <div className="flex justify-center items-center mt-6">
+      {/* <div className="flex justify-center items-center mt-6">
         <div className="text-white">Books Page!</div>
-      </div>
+      </div> */}
+      <EditionDateFilter onFilter={filterHandler} />
       <BooksTable books={books} />
     </>
   );

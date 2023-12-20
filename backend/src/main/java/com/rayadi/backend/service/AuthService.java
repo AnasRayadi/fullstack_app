@@ -4,7 +4,7 @@ import com.rayadi.backend.dto.RefreshRequest;
 import com.rayadi.backend.dto.SignInRequest;
 import com.rayadi.backend.dto.SignUpRequest;
 import com.rayadi.backend.model.AuthResponse;
-import com.rayadi.backend.model.Role;
+import com.rayadi.backend.enums.Role;
 import com.rayadi.backend.model.User;
 import com.rayadi.backend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
