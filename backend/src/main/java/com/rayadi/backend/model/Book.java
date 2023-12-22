@@ -23,6 +23,6 @@ public class Book {
     private String image;
     private LocalDate edition;
     @ManyToOne
-    @JoinColumn(name = "cat_id")
+    @JoinColumn(name = "categoryId")
     private BookCategory category;
 }

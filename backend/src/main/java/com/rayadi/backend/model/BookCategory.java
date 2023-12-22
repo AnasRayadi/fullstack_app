@@ -14,6 +14,6 @@ import java.util.List;
 public class BookCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cat_id;
+    private Integer categoryId;
     private String name;
 }

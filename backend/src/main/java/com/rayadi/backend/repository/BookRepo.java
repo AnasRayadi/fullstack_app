@@ -4,11 +4,21 @@ import com.rayadi.backend.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.List;
+
 
 @Repository
 public interface BookRepo extends JpaRepository<Book, Integer> {
+
+    /* @Query("select b from Book b where " +
+            "(:categoryId is null or b.category.categoryId = :categoryId) " +
+            "and ((:startDate is null and :endDate is null)  or (b.edition >= :startDate and b.edition <=:endDate)) ")
+            //+"and (:endDate is null or b.edition <= :endDate)")
+    List<Book> filter(@Param("categoryId") Integer categoryId,
+                      @Param("startDate") LocalDate startDate,
+                      @Param("endDate") LocalDate endDate);*/
+
     boolean existsByTitle(String title);
-    List<Book> findByEditionBetween(LocalDate start, LocalDate end);
+    /* List<Book> findByEditionBetween(LocalDate start, LocalDate end);
+    List<Book> findByCategoryCategoryId(Integer categoryId); */
+
 }
