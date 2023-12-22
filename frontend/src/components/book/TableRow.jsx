@@ -2,10 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { extractRoles, getAccessToken } from "../../util/auth";
 
-const TableRow = ({ book }) => {
+const TableRow = ({ book ,onDelete}) => {
   const token = getAccessToken();
   const role = extractRoles(token);
-  const handleDelete = () => {
+  const handleDelete = (book) => {
+    onDelete(book);
     // Handle delete logic here
   };
 
@@ -17,6 +18,7 @@ const TableRow = ({ book }) => {
       <td className="px-6 py-4 whitespace-nowrap">{book.title}</td>
       <td className="px-6 py-4 whitespace-nowrap">{book.author}</td>
       <td className="px-6 py-4 whitespace-nowrap">{book.edition}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{book.category.name}</td>
       <td className="px-6 py-4 whitespace-nowrap">
         {role.includes("ROLE_ADMIN") && (
           <Link to={`${book.id}/edit`} className="text-blue-500 hover:text-blue-700 mr-2">
@@ -26,7 +28,7 @@ const TableRow = ({ book }) => {
         {role.includes("ROLE_ADMIN") && (
           <button
             className="text-red-500 hover:text-red-700 mr-2"
-            onClick={handleDelete}
+            onClick={()=> handleDelete(book)}
           >
             Delete
           </button>

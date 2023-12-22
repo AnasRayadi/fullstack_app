@@ -3,6 +3,8 @@ import BooksTable from "../components/book/BookTable";
 // import { useLoaderData} from "react-router";
 import api from "../api/axiosInterceptors";
 import EditionDateFilter from "../components/BookFilter/EditionDateFilter";
+import CategoryFilter from "../components/BookFilter/CategoryFilter";
+import Filters from "../components/BookFilter/Filters";
 // const DUMMY_BOOKS = [
 //   {
 //     id: "b1",
@@ -53,30 +55,51 @@ const Books = () => {
   
   // const books = data.booksData;
   const [books, setBooks ] = useState([])
+  const [categories, setCategories] = useState([])
+
   useEffect(()=>{
     const fetchBooks = async () => {
       const res = await api.get("/books");
       const booksData = await res.data;
       setBooks(booksData)
-      console.log(booksData);
+      // console.log(booksData);
     }
     fetchBooks()
-  },[])
-  
+  },[]);
+
+  useEffect(()=>{
+    const fetchCategories = async () => {
+      const res = await api.get("/categories");
+      const categoriesData = await res.data;
+      setCategories(categoriesData)
+      // console.log(categoriesData);
+    }
+    fetchCategories()
+  },[]);
+
   const filterHandler = (filteredBooks) => {
     setBooks(filteredBooks);
   };
+
+  const onRefreshData = async () => {
+    const res = await api.get("/books");
+    const booksData = await res.data;
+    setBooks(booksData)
+  }
 
   return (
     <>
       {/* <div className="flex justify-center items-center mt-6">
         <div className="text-white">Books Page!</div>
       </div> */}
-      <EditionDateFilter onFilter={filterHandler} />
-      <BooksTable books={books} />
+      {/* <EditionDateFilter onFilter={filterHandler} />
+      <CategoryFilter onFilter={filterHandler} categories={categories}/> */}
+      <Filters onFilter={filterHandler} categories={categories}/>
+      <BooksTable books={books} refreshData={onRefreshData}/>
     </>
   );
 };
+
 export default Books;
 
 // export const loader = async () => {
