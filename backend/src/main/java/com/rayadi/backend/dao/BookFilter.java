@@ -24,12 +24,17 @@ public class BookFilter {
         CriteriaQuery<Book> criteriaQuery = criteriaBuilder.createQuery(Book.class);
         List<Predicate> predicates = new ArrayList<>();
         Root<Book> bookRoot = criteriaQuery.from(Book.class);
-        if(request.getCategoryId() != null){
-            predicates.add(criteriaBuilder.equal(bookRoot.get("category").get("categoryId"), request.getCategoryId()));
+        if(request.getCategoryId() != null && !request.getCategoryId().equals("") ){
+            predicates.add(criteriaBuilder.equal(bookRoot.get("category").get("categoryId"),request.getCategoryId()));
         }
-        if(request.getStartDate() != null && request.getEndDate() != null){
+        if(request.getStartDate() != null && !request.getStartDate().equals("")){
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            predicates.add(criteriaBuilder.between(bookRoot.get("edition"), LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter)));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(bookRoot.get("edition"), LocalDate.parse(request.getStartDate(),formatter)));
+            //predicates.add(criteriaBuilder.between(bookRoot.get("edition"), LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter)));
+        }
+        if(request.getEndDate() != null && !request.getEndDate().equals("") ){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(bookRoot.get("edition"), LocalDate.parse(request.getEndDate(),formatter)));
         }
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         return em.createQuery(criteriaQuery).getResultList();

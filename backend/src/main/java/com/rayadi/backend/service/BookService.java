@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -106,6 +107,14 @@ public class BookService {
         return bookRepo.filter(Integer.valueOf(request.getCategoryId()),LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter) );
     }*/
     public List<Book> filterBooks(FilterBooksRequest request) {
+        /*if(request.getStartDate().equals("null") || request.getStartDate().equals("") ){
+            request.setStartDate(null);
+            //return bookFilter.findAllByCriteria(request);
+        }
+        if (request.getEndDate().equals("null") || request.getEndDate().equals("") ){
+            request.setEndDate(null);
+            //return bookFilter.findAllByCriteria(request);
+        }*/
         return bookFilter.findAllByCriteria(request);
     }
 }
