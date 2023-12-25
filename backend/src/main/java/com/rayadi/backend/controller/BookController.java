@@ -38,6 +38,10 @@ public class BookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/filter")
+    public ResponseEntity<List<Book>> filterBooks(@RequestBody FilterBooksRequest request) {
+        return ResponseEntity.ok(bookService.filterBooks(request));
+    }
     /*@PostMapping("/filterByDate")
     public ResponseEntity<List<Book>> filterBooksByDate(@RequestBody FilterBooksByDateRequest request) {
         return ResponseEntity.ok(bookService.getBooksByEdition(request));
@@ -46,9 +50,6 @@ public class BookController {
     public ResponseEntity<List<Book>> filterBooksByCategory(@RequestBody FilterBooksByCategoryRequest request) {
         return ResponseEntity.ok(bookService.getBooksByCategory(request));
     }*/
-    @PostMapping("/filter")
-    public ResponseEntity<List<Book>> filterBooks(@RequestBody FilterBooksRequest request) {
-        return ResponseEntity.ok(bookService.filterBooks(request));
-    }
+
 
 }
