@@ -2,12 +2,13 @@ package com.rayadi.backend.repository;
 
 import com.rayadi.backend.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 
 
 @Repository
-public interface BookRepo extends JpaRepository<Book, Integer> {
+public interface BookRepo extends JpaRepository<Book, Integer> , QuerydslPredicateExecutor<Book> {
 
     /* @Query("select b from Book b where " +
             "(:categoryId is null or b.category.categoryId = :categoryId) " +
@@ -18,7 +19,5 @@ public interface BookRepo extends JpaRepository<Book, Integer> {
                       @Param("endDate") LocalDate endDate);*/
 
     boolean existsByTitle(String title);
-    /* List<Book> findByEditionBetween(LocalDate start, LocalDate end);
-    List<Book> findByCategoryCategoryId(Integer categoryId); */
 
 }

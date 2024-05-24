@@ -5,10 +5,13 @@ import com.rayadi.backend.dto.FilterBooksRequest;
 import com.rayadi.backend.model.Book;
 import com.rayadi.backend.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,18 +41,12 @@ public class BookController {
         bookService.deleteBook(bookId);
         return ResponseEntity.ok().build();
     }
-    @PostMapping("/filter")
-    public ResponseEntity<List<Book>> filterBooks(@RequestBody FilterBooksRequest request) {
-        return ResponseEntity.ok(bookService.filterBooks(request));
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<Book>> filterBooks(@RequestParam(required = false) Map<String, String> filters
+                                                  /*@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "5") int size*/
+    ) {
+        return ResponseEntity.ok(bookService.filterBooks(filters));
     }
-    /*@PostMapping("/filterByDate")
-    public ResponseEntity<List<Book>> filterBooksByDate(@RequestBody FilterBooksByDateRequest request) {
-        return ResponseEntity.ok(bookService.getBooksByEdition(request));
-    }*/
-    /*@PostMapping("/filterByCategory")
-    public ResponseEntity<List<Book>> filterBooksByCategory(@RequestBody FilterBooksByCategoryRequest request) {
-        return ResponseEntity.ok(bookService.getBooksByCategory(request));
-    }*/
-
-
 }

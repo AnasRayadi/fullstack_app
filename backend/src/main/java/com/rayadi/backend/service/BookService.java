@@ -1,20 +1,23 @@
 package com.rayadi.backend.service;
 
-import com.rayadi.backend.dao.BookFilter;
+//import com.rayadi.backend.dao.BookFilter;
 import com.rayadi.backend.dto.AddBookRequest;
-import com.rayadi.backend.dto.FilterBooksRequest;
 import com.rayadi.backend.exception.DuplicateResourceException;
 import com.rayadi.backend.exception.RequestValidationException;
 import com.rayadi.backend.exception.ResourceNotFoundException;
 import com.rayadi.backend.model.Book;
 import com.rayadi.backend.model.BookCategory;
+import com.rayadi.backend.predicate.BookPredicate;
 import com.rayadi.backend.repository.BookRepo;
 import com.rayadi.backend.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -22,7 +25,7 @@ import java.util.Optional;
 public class BookService {
     private final BookRepo bookRepo;
     private final CategoryRepo categoryRepo;
-    private final BookFilter bookFilter;
+    //private final BookFilter bookFilter;
     public List<Book> getAllBooks() {
         return bookRepo.findAll();
     }
@@ -77,8 +80,6 @@ public class BookService {
             throw new RequestValidationException("No change detected");
         }
         return bookRepo.save(book);
-
-        //throw new ResourceNotFoundException("Book with id [%s] not found".formatted(id));
     }
     public void deleteBook(Integer id) {
         Optional<Book> book = bookRepo.findById(id);
@@ -88,13 +89,13 @@ public class BookService {
             throw new ResourceNotFoundException("Book with id [%s] not found".formatted(id));
         }
     }
-    /*public List<Book> getBooksByEdition(FilterBooksByDateRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return bookRepo.findByEditionBetween(LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter));
-    }*/
-    /*public List<Book> getBooksByCategory(FilterBooksByCategoryRequest request) {
-        return bookRepo.findByCategoryCategoryId(Integer.valueOf(request.getCategoryId()));
-    }*/
+    public Page<Book> filterBooks(Map<String, String> filters) {
+        var predicate = BookPredicate.getBookPredicate(filters);
+        Pageable paging = PageRequest.of(Integer.parseInt(filters.get("page")),Integer.parseInt(filters.get("size")));
+        return bookRepo.findAll(predicate, paging);
+        //return (List<Book>) bookRepo.findAll(predicate);
+    }
+
 
     /*public List<Book> filterBooks(FilterBooksRequest request) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -106,15 +107,18 @@ public class BookService {
         }
         return bookRepo.filter(Integer.valueOf(request.getCategoryId()),LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter) );
     }*/
-    public List<Book> filterBooks(FilterBooksRequest request) {
-        /*if(request.getStartDate().equals("null") || request.getStartDate().equals("") ){
+/*    public List<Book> filterBooks( String startDate , String endDate, String categoryId
+            //FilterBooksRequest request
+    ) {
+        return bookFilter.findAllByCriteria(startDate, endDate, categoryId);
+        *//*if(request.getStartDate().equals("null") || request.getStartDate().equals("") ){
             request.setStartDate(null);
             //return bookFilter.findAllByCriteria(request);
         }
         if (request.getEndDate().equals("null") || request.getEndDate().equals("") ){
             request.setEndDate(null);
             //return bookFilter.findAllByCriteria(request);
-        }*/
-        return bookFilter.findAllByCriteria(request);
-    }
+        }*//*
+    }*/
+
 }
