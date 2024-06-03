@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateBookRequest {
+public class UpdateBookDto {
     private String title;
     private String author;
     private String description;

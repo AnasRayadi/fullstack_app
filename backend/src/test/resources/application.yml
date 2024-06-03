@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+  jpa:
+    database: h2
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  main:
+    web-application-type: servlet
+
+application:
+  security:
+    jwt:
+      secret-key: 2b8a83e2c7eeb4b772337d9e781d9f2ff82e37be31d0b3d0c92d5bf7c3b30d52
+      expiration: 180000 #86400000  => a day | 60000 => one minute
+      refresh-token:
+        expiration: 604800000 # 7 days

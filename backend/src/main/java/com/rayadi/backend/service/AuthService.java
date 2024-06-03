@@ -1,8 +1,8 @@
 package com.rayadi.backend.service;
 
 import com.rayadi.backend.dto.RefreshRequest;
-import com.rayadi.backend.dto.SignInRequest;
-import com.rayadi.backend.dto.SignUpRequest;
+import com.rayadi.backend.dto.SignInDto;
+import com.rayadi.backend.dto.SignUpDto;
 import com.rayadi.backend.model.AuthResponse;
 import com.rayadi.backend.enums.Role;
 import com.rayadi.backend.model.User;
@@ -22,7 +22,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthResponse register(SignUpRequest request) {
+    public AuthResponse register(SignUpDto request) {
         var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -39,7 +39,7 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
-    public AuthResponse authenticate(SignInRequest request) {
+    public AuthResponse authenticate(SignInDto request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword())
         );

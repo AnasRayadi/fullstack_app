@@ -1,10 +1,11 @@
 package com.rayadi.backend.service;
 
-//import com.rayadi.backend.dao.BookFilter;
-import com.rayadi.backend.dto.AddBookRequest;
+import com.rayadi.backend.converter.BookConverter;
+import com.rayadi.backend.dto.BookDto;
 import com.rayadi.backend.exception.DuplicateResourceException;
 import com.rayadi.backend.exception.RequestValidationException;
 import com.rayadi.backend.exception.ResourceNotFoundException;
+import com.rayadi.backend.mappers.BookMapper;
 import com.rayadi.backend.model.Book;
 import com.rayadi.backend.model.BookCategory;
 import com.rayadi.backend.predicate.BookPredicate;
@@ -20,105 +21,82 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.rayadi.backend.constants.ErrorMessagesConstant.*;
+
 @Service
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepo bookRepo;
     private final CategoryRepo categoryRepo;
-    //private final BookFilter bookFilter;
+    private final BookConverter bookConverter ;
+    
+
     public List<Book> getAllBooks() {
         return bookRepo.findAll();
     }
-    public Book getBookById(Integer id) {
-        return bookRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Book with id [%s] not found".formatted(id)));
+    public BookDto getBookById(Long id) {
+        Book book = bookRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException(BOOK_NOT_FOUND.formatted(id)));
+        return bookConverter.bookToBookDto(book);
     }
-    public Book addBook(AddBookRequest request) {
-        if (request.getTitle() != null && request.getAuthor() != null && request.getDescription() != null && request.getImage() != null && request.getEdition() != null && request.getCategoryId() != null) {
-            if (bookRepo.existsByTitle(request.getTitle())){
-                throw new DuplicateResourceException("Book with title [%s] already exists".formatted(request.getTitle()));
-            }
-            BookCategory category = categoryRepo.findById(request.getCategoryId()).orElseThrow(()-> new ResourceNotFoundException("Category with id [%s] not found".formatted(request.getCategoryId())));
-            Book book = Book.builder()
-                    .title(request.getTitle())
-                    .author(request.getAuthor())
-                    .description(request.getDescription())
-                    .image(request.getImage())
-                    .edition(request.getEdition())
-                    .category(category)
-                    .build();
-            return bookRepo.save(book);
+    public Book addBook(BookDto bookDto) {
+        // check for duplicate title
+        if(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())){
+            throw new DuplicateResourceException(BOOK_TITLE_EXISTS.formatted(bookDto.getTitle()));
         }
-        throw new RuntimeException("Invalid request");
+
+        // check if category exists
+        BookCategory category = categoryRepo.findById(bookDto.getCategoryId())
+                .orElseThrow(()-> new ResourceNotFoundException(CATEGORY_NOT_FOUND.formatted(bookDto.getCategoryId())));
+
+        // convert dto to book
+        Book book = bookConverter.bookDtoToBook(bookDto);
+        book.setCategory(category);
+
+        // save book
+        return bookRepo.save(book);
     }
-    public Book updateBook(Integer id, AddBookRequest request) {
-        Book book = getBookById(id);
+
+    public Book updateBook(Long id, BookDto bookDto) {
+        Book book = bookConverter.bookDtoToBook(getBookById(id));
         boolean change = false;
-        if (request.getTitle() != null && !request.getTitle().equals(book.getTitle())) {
-            if (bookRepo.existsByTitle(request.getTitle())){
-                throw new DuplicateResourceException("Book title taken before");
+        if (bookDto.getTitle().equals(book.getTitle())) {
+            if (bookRepo.existsByTitle(bookDto.getTitle())){
+                throw new DuplicateResourceException(BOOK_TITLE_TAKEN);
             }
-            book.setTitle(request.getTitle());
+            book.setTitle(bookDto.getTitle());
             change = true;
         }
-        if (request.getAuthor() != null && !request.getAuthor().equals(book.getAuthor())) {
-            book.setAuthor(request.getAuthor());
+        if (!bookDto.getAuthor().equals(book.getAuthor())) {
+            book.setAuthor(bookDto.getAuthor());
             change = true;
         }
-        if (request.getDescription() != null && !request.getDescription().equals(book.getDescription())) {
-            book.setDescription(request.getDescription());
+        if (!bookDto.getDescription().equals(book.getDescription())) {
+            book.setDescription(bookDto.getDescription());
             change = true;
         }
-        if (request.getImage() != null && !request.getImage().equals(book.getImage())) {
-            book.setImage(request.getImage());
+        if (!bookDto.getImage().equals(book.getImage())) {
+            book.setImage(bookDto.getImage());
             change = true;
         }
-        if (request.getEdition() != null && !request.getEdition().equals(book.getEdition())) {
-            book.setEdition(request.getEdition());
+        if (!bookDto.getEdition().equals(book.getEdition())) {
+            book.setEdition(bookDto.getEdition());
             change = true;
         }
         if (!change) {
-            throw new RequestValidationException("No change detected");
+            throw new RequestValidationException(NO_CHANGE_DETECTED);
         }
         return bookRepo.save(book);
     }
-    public void deleteBook(Integer id) {
-        Optional<Book> book = bookRepo.findById(id);
-        if (book.isPresent()) {
-            bookRepo.delete(book.get());
-        } else {
-            throw new ResourceNotFoundException("Book with id [%s] not found".formatted(id));
-        }
+    public void deleteBook(Long id) {
+        Book book = bookRepo.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(BOOK_NOT_FOUND.formatted(id)));
+        bookRepo.delete(book);
+
     }
     public Page<Book> filterBooks(Map<String, String> filters) {
         var predicate = BookPredicate.getBookPredicate(filters);
         Pageable paging = PageRequest.of(Integer.parseInt(filters.get("page")),Integer.parseInt(filters.get("size")));
         return bookRepo.findAll(predicate, paging);
-        //return (List<Book>) bookRepo.findAll(predicate);
     }
-
-
-    /*public List<Book> filterBooks(FilterBooksRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        if(request.getStartDate()==null || request.getEndDate()==null){
-            return bookRepo.filter(Integer.valueOf(request.getCategoryId()) ,null,null);
-        }
-        if (request.getCategoryId()==null){
-            return bookRepo.filter(null,LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter) );
-        }
-        return bookRepo.filter(Integer.valueOf(request.getCategoryId()),LocalDate.parse(request.getStartDate(),formatter), LocalDate.parse(request.getEndDate(),formatter) );
-    }*/
-/*    public List<Book> filterBooks( String startDate , String endDate, String categoryId
-            //FilterBooksRequest request
-    ) {
-        return bookFilter.findAllByCriteria(startDate, endDate, categoryId);
-        *//*if(request.getStartDate().equals("null") || request.getStartDate().equals("") ){
-            request.setStartDate(null);
-            //return bookFilter.findAllByCriteria(request);
-        }
-        if (request.getEndDate().equals("null") || request.getEndDate().equals("") ){
-            request.setEndDate(null);
-            //return bookFilter.findAllByCriteria(request);
-        }*//*
-    }*/
 
 }

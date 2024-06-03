@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/api/v1/auth/**",
                                                 "/api/v1/books",
+                                                "/api/v1/books/new",
                                             "/api/v1/books/{bookId}",
                                         "/api/v1/books/filter",
                                         "/api/v1/categories")

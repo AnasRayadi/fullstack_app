@@ -1,12 +1,11 @@
 package com.rayadi.backend.controller;
 
-import com.rayadi.backend.dto.AddBookRequest;
-import com.rayadi.backend.dto.FilterBooksRequest;
+import com.rayadi.backend.dto.BookDto;
 import com.rayadi.backend.model.Book;
 import com.rayadi.backend.service.BookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,7 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<Book> getBookById(@PathVariable Integer bookId) {
+    public ResponseEntity<BookDto> getBookById(@PathVariable Long bookId) {
         return ResponseEntity.ok(bookService.getBookById(bookId));
     }
     @GetMapping
@@ -29,15 +28,15 @@ public class BookController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Book> addBook(@RequestBody AddBookRequest request) {
+    public ResponseEntity<Book> addBook(@Valid @RequestBody BookDto request) {
         return ResponseEntity.ok(bookService.addBook(request));
     }
     @PutMapping("/{bookId}")
-    public ResponseEntity<Book> updateBook(@PathVariable Integer bookId, @RequestBody AddBookRequest request) {
+    public ResponseEntity<Book> updateBook(@PathVariable Long bookId, @RequestBody BookDto request) {
         return ResponseEntity.ok(bookService.updateBook(bookId, request));
     }
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Integer bookId) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
         bookService.deleteBook(bookId);
         return ResponseEntity.ok().build();
     }

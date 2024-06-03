@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 
 
 @Repository
-public interface BookRepo extends JpaRepository<Book, Integer> , QuerydslPredicateExecutor<Book> {
+public interface BookRepo extends JpaRepository<Book, Long> , QuerydslPredicateExecutor<Book> {
 
     /* @Query("select b from Book b where " +
             "(:categoryId is null or b.category.categoryId = :categoryId) " +
@@ -19,5 +20,6 @@ public interface BookRepo extends JpaRepository<Book, Integer> , QuerydslPredica
                       @Param("endDate") LocalDate endDate);*/
 
     boolean existsByTitle(String title);
+    boolean existsByTitleIgnoreCase(String title);
 
 }
