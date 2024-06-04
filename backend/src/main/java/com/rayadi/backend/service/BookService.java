@@ -39,6 +39,7 @@ public class BookService {
         return bookConverter.bookToBookDto(book);
     }
     public Book addBook(BookDto bookDto) {
+
         // check for duplicate title
         if(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())){
             throw new DuplicateResourceException(BOOK_TITLE_EXISTS.formatted(bookDto.getTitle()));
@@ -47,6 +48,7 @@ public class BookService {
         // check if category exists
         BookCategory category = categoryRepo.findById(bookDto.getCategoryId())
                 .orElseThrow(()-> new ResourceNotFoundException(CATEGORY_NOT_FOUND.formatted(bookDto.getCategoryId())));
+
 
         // convert dto to book
         Book book = bookConverter.bookDtoToBook(bookDto);
@@ -57,9 +59,11 @@ public class BookService {
     }
 
     public Book updateBook(Long id, BookDto bookDto) {
-        Book book = bookConverter.bookDtoToBook(getBookById(id));
+        Book book = bookRepo.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(BOOK_NOT_FOUND.formatted(id)));
+
         boolean change = false;
-        if (bookDto.getTitle().equals(book.getTitle())) {
+        if (!bookDto.getTitle().equals(book.getTitle())) {
             if (bookRepo.existsByTitle(bookDto.getTitle())){
                 throw new DuplicateResourceException(BOOK_TITLE_TAKEN);
             }
