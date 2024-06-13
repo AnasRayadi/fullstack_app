@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.rayadi.backend.constants.ErrorMessagesConstant.AUTHOR_EXISTS;
-import static com.rayadi.backend.constants.ErrorMessagesConstant.AUTHOR_NOT_FOUND;
+import static com.rayadi.backend.constants.ExceptionMessagesConstant.*;
 import static com.rayadi.backend.util.util.emailIsValid;
 
 @Service
@@ -24,16 +23,18 @@ public class AuthorService {
         Author author = authorRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException(AUTHOR_NOT_FOUND.formatted(id)));
         return AuthorConverter.authorToAuthorDto(author);
     }
-//    public List<AuthorDto> getAllAuthors(){
-//        List<Author> authors = authorRepo.findAll();
-//
-//    }
+    public List<AuthorDto> getAllAuthors(){
+        List<Author> authors = authorRepo.findAll();
+
+        return AuthorConverter.authorsToAuthorsDto(authors);
+    }
+
     public AuthorDto createAuthor(AuthorDto authorDto){
-        if(authorRepo.existsByFullNameIgnoreCase(authorDto.getName())){
-            throw new DuplicateResourceException(AUTHOR_EXISTS.formatted(authorDto.getName()));
+        if(authorRepo.existsByEmail(authorDto.getEmail())){
+            throw new DuplicateResourceException(EMAIL_EXISTS.formatted(authorDto.getEmail()));
         }
         if(!emailIsValid(authorDto.getEmail())){
-            throw new IllegalArgumentException("Invalid email address");
+            throw new RuntimeException(INVALID_EMAIL);
         }
         Author author = AuthorConverter.authorDtoToAuthor(authorDto);
         author = authorRepo.save(author);

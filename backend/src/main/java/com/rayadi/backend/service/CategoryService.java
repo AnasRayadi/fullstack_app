@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.rayadi.backend.constants.ErrorMessagesConstant.CATEGORY_NOT_FOUND;
+import static com.rayadi.backend.constants.ExceptionMessagesConstant.CATEGORY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

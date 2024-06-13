@@ -18,8 +18,6 @@ public interface BookRepo extends JpaRepository<Book, Long> , QuerydslPredicateE
     List<Book> filter(@Param("categoryId") Integer categoryId,
                       @Param("startDate") LocalDate startDate,
                       @Param("endDate") LocalDate endDate);*/
-
-    boolean existsByTitle(String title);
     boolean existsByTitleIgnoreCase(String title);
 
 }

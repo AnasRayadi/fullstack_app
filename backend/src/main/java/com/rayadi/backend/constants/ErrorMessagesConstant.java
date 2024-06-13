@@ -1,17 +1,17 @@
 package com.rayadi.backend.constants;
 
-public final class ErrorMessagesConstant {
-    private ErrorMessagesConstant(){
+public class ErrorMessagesConstant {
+    private ErrorMessagesConstant() {
         // Constant class
     }
+    public static final String TITLE_REQUIRED = "Title is required";
+    public static final String AUTHOR_REQUIRED = "Author is required";
+    public static final String DESCRIPTION_REQUIRED = "Description is required";
+    public static final String DESCRIPTION_MIN_LENGTH = "Description must be at least 10 characters long";
+    public static final String IMAGE_REQUIRED = "Image is required";
+    public static final String IMAGE_VALID_URL = "Image must be a valid URL ending with .png or .jpg";
+    public static final String EDITION_REQUIRED = "Edition is required";
+    public static final String CATEGORY_ID_REQUIRED = "Category ID is required";
+    public static final String PRICE = "Price is required";
 
-    public static final String BOOK_NOT_FOUND = "Book with id [%s] not found";
-    public static final String CATEGORY_NOT_FOUND = "Category with id [%s] not found";
-    public static final String AUTHOR_NOT_FOUND = "Author with id [%s] not found";
-    public static final String AUTHOR_EXISTS = "Author with name [%s] already exists";
-    public static final String BOOK_TITLE_EXISTS = "Book with title [%s] already exists";
-    public static final String BOOK_TITLE_TAKEN = "Book title taken before";
-    public static final String NO_CHANGE_DETECTED = "No change detected";
-    public static final String INVALID_EDITION_DATE = "Invalid edition date";
-    public static final String INVALID_BIRTH_DATE = "Invalid birth date";
 }

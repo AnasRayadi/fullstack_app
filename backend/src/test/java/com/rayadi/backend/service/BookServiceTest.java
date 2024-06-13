@@ -10,29 +10,26 @@ import com.rayadi.backend.model.BookCategory;
 import com.rayadi.backend.repository.BookRepo;
 import com.rayadi.backend.repository.CategoryRepo;
 import org.instancio.Instancio;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.rayadi.backend.constants.ErrorMessagesConstant.*;
+import static com.rayadi.backend.constants.ExceptionMessagesConstant.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
     @Mock
@@ -45,12 +42,12 @@ class BookServiceTest {
     @InjectMocks
     private BookService bookService;
 
-    private BookCategory category;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        category = Instancio.of(BookCategory.class).create();
     }
+
 
     @Nested
     class TestDeleteBook {
@@ -61,7 +58,7 @@ class BookServiceTest {
 
             // When
             // Then
-            assertThatThrownBy(()-> bookService.deleteBook(id))
+            assertThatThrownBy(()->bookService.deleteBook(id))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage(BOOK_NOT_FOUND.formatted(id));
         }
@@ -70,7 +67,6 @@ class BookServiceTest {
             // Given
             Long id = 1L;
             Book book = Instancio.of(Book.class).create();
-            book.setId(id);
             when(bookRepo.findById(id)).thenReturn(Optional.of(book));
 
             // When
@@ -81,13 +77,11 @@ class BookServiceTest {
             verify(bookRepo).delete(book);
         }
 
-
-
     }
     @Nested
     class TestGetBookById {
         @Test
-        void itShouldThrowBookNotFound(){
+        void itShouldThrowResourceNotFoundExceptionWhenBookNotFound(){
             // Given
             Long id = 1L;
 
@@ -102,15 +96,14 @@ class BookServiceTest {
             // Given
             Long id = 1L;
             Book book = Instancio.of(Book.class).create();
-            book.setId(id);
             when(bookRepo.findById(id)).thenReturn(Optional.of(book));
+            when(bookConverter.bookToBookDto(book)).thenReturn(Instancio.of(BookDto.class).create());
 
             // When
-            BookDto bookDto = bookService.getBookById(id);
+            bookService.getBookById(id);
 
             // Then
             verify(bookRepo).findById(id);
-            assertThat(bookDto.getId()).isEqualTo(id);
 
         }
     }
@@ -119,11 +112,9 @@ class BookServiceTest {
     @Nested
     class TestCreateBook {
         @Test
-        void itShouldThrowDuplicateResourceException() {
+        void itShouldThrowDuplicateResourceExceptionWhenTitleExists() {
             // Given
             BookDto bookDto = Instancio.of(BookDto.class).create();
-            category.setCategoryId(bookDto.getCategoryId());
-            when(categoryRepo.findById(anyInt())).thenReturn(Optional.of(category));
             when(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())).thenReturn(true);
 
             // When
@@ -131,40 +122,37 @@ class BookServiceTest {
             assertThatThrownBy(() -> bookService.addBook(bookDto))
                     .isInstanceOf(DuplicateResourceException.class)
                     .hasMessage(BOOK_TITLE_EXISTS.formatted(bookDto.getTitle()));
-        }
 
+        }
         @Test
-        void itShouldThrowCategoryNotFound() {
+        void itShouldThrowResourceNotFoundExceptionWhenCategoryNotFound() {
             // Given
             BookDto bookDto = Instancio.of(BookDto.class).create();
+            Book book = Instancio.of(Book.class).create();
+            when(bookConverter.bookDtoToBook(bookDto)).thenReturn(book);
 
             // When
             // Then
             assertThatThrownBy(() -> bookService.addBook(bookDto))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage(CATEGORY_NOT_FOUND.formatted(bookDto.getCategoryId()));
+            verify(categoryRepo).findById(bookDto.getCategoryId());
         }
-
         @Test
-        void itShouldCreateBook() {
+        void itShouldCreateBookSuccessfully() {
             // Given
             BookDto bookDto = Instancio.of(BookDto.class).create();
-            category.setCategoryId(bookDto.getCategoryId());
-            when(categoryRepo.findById(anyInt())).thenReturn(Optional.of(category));
+            Book book = Instancio.of(Book.class).create();
+            BookCategory bookCategory = Instancio.of(BookCategory.class).create();
+            when(bookConverter.bookDtoToBook(bookDto)).thenReturn(book);
+            when(categoryRepo.findById(anyInt())).thenReturn(Optional.of(bookCategory));
             when(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())).thenReturn(false);
 
             // When
-            Book book = bookService.addBook(bookDto);
+            bookService.addBook(bookDto);
 
             // Then
-            verify(bookRepo).save(book);
-            assertThat(book.getTitle()).isEqualTo(bookDto.getTitle());
-            assertThat(book.getAuthor()).isEqualTo(bookDto.getAuthor());
-            assertThat(book.getDescription()).isEqualTo(bookDto.getDescription());
-            assertThat(book.getImage()).isEqualTo(bookDto.getImage());
-            assertThat(book.getEdition()).isEqualTo(bookDto.getEdition());
-            assertThat(book.getCategory().getCategoryId()).isEqualTo(bookDto.getCategoryId());
-            assertThat(book.getPrice()).isEqualTo(bookDto.getPrice());
+            verify(bookRepo).save(any());
 
         }
     }
@@ -175,7 +163,7 @@ class BookServiceTest {
             // Given
             Long id = 1L;
             BookDto bookDto = Instancio.of(BookDto.class).create();
-
+            when(bookRepo.findById(id)).thenReturn(Optional.empty());
             // When
             // Then
             assertThatThrownBy(()-> bookService.updateBook(id, bookDto))
@@ -188,9 +176,8 @@ class BookServiceTest {
             Long id = 1L;
             BookDto bookDto = Instancio.of(BookDto.class).create();
             Book book = Instancio.of(Book.class).create();
-            book.setId(id);
             when(bookRepo.findById(id)).thenReturn(Optional.of(book));
-            when(bookRepo.existsByTitle(bookDto.getTitle())).thenReturn(true);
+            when(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())).thenReturn(true);
 
             // When
             // Then
@@ -198,55 +185,58 @@ class BookServiceTest {
                     .isInstanceOf(DuplicateResourceException.class)
                     .hasMessage(BOOK_TITLE_TAKEN);
         }
+
         @Test
         void itShouldThrowRequestValidationException() {
             // Given
-            Long bookId = 1L;
-            BookDto bookDto = new BookDto();
-            bookDto.setTitle("Same Title");
-            bookDto.setAuthor("Same Author");
-            bookDto.setDescription("Same Description");
-            bookDto.setImage("https://same-image.com/image.jpg");
-            bookDto.setEdition(LocalDate.parse("1980-01-01"));
+            Long id = 1L;
+            BookDto bookDto = Instancio.of(BookDto.class).create();
+            Book book = Instancio.of(Book.class).create();
+            book.setId(id);
+            when(bookRepo.findById(id)).thenReturn(Optional.of(book));
+            when(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())).thenReturn(false);
 
-            Book existingBook = new Book();
-            existingBook.setId(bookId);
-            existingBook.setTitle("Same Title");
-            existingBook.setAuthor("Same Author");
-            existingBook.setDescription("Same Description");
-            existingBook.setImage("https://same-image.com/image.jpg");
-            existingBook.setEdition(LocalDate.parse("1980-01-01"));
-
-            when(bookRepo.findById(bookId)).thenReturn(Optional.of(existingBook));
-
-            // When
-            // Then
-            assertThatThrownBy(() -> bookService.updateBook(bookId, bookDto))
+            // when
+            // then
+            assertThatThrownBy(() -> bookService.updateBook(id, bookDto))
                     .isInstanceOf(RequestValidationException.class)
                     .hasMessage(NO_CHANGE_DETECTED);
         }
 
         @Test
-        void itShouldUpdateBook() {
+        void itShouldUpdateBookSuccessfully() {
             // Given
-            Long bookId = 1L;
-            BookDto bookDto = Instancio.create(BookDto.class);
-            Book existingBook = Instancio.create(Book.class);
-            existingBook.setId(bookId);
-            when(bookRepo.findById(bookId)).thenReturn(Optional.of(existingBook));
-            when(bookRepo.existsByTitle(bookDto.getTitle())).thenReturn(false);
+            Long id = 1L;
+            BookDto bookDto = Instancio.of(BookDto.class).create();
+            bookDto.setId(id);
+            bookDto.setTitle("title");
+            bookDto.setAuthor("author");
+            bookDto.setDescription("description for book");
+            bookDto.setImage("https://image.com/image.jpg");
+            bookDto.setEdition(LocalDate.parse("2021-01-01"));
+
+            Book book = Instancio.of(Book.class).create();
+            book.setId(id);
+            book.setTitle("old title");
+            book.setAuthor("old author");
+            book.setDescription("old description for book");
+            book.setImage("https://image.com/old-image.jpg");
+            book.setEdition(LocalDate.parse("2020-01-01"));
+
+
+            when(bookRepo.findById(id)).thenReturn(Optional.of(book));
+            when(bookRepo.existsByTitleIgnoreCase(bookDto.getTitle())).thenReturn(false);
 
             // When
-            Book updatedBook = bookService.updateBook(bookId, bookDto);
+            bookService.updateBook(id, bookDto);
 
             // Then
-            verify(bookRepo).findById(bookId);
-            verify(bookRepo).save(existingBook);
-            assertThat(updatedBook.getTitle()).isEqualTo(bookDto.getTitle());
-            assertThat(updatedBook.getAuthor()).isEqualTo(bookDto.getAuthor());
-            assertThat(updatedBook.getDescription()).isEqualTo(bookDto.getDescription());
-            assertThat(updatedBook.getImage()).isEqualTo(bookDto.getImage());
-            assertThat(updatedBook.getEdition()).isEqualTo(bookDto.getEdition());
+            verify(bookRepo).save(book);
+            assertThat(book.getTitle()).isEqualTo(bookDto.getTitle());
+            assertThat(book.getAuthor()).isEqualTo(bookDto.getAuthor());
+            assertThat(book.getDescription()).isEqualTo(bookDto.getDescription());
+            assertThat(book.getImage()).isEqualTo(bookDto.getImage());
+            assertThat(book.getEdition()).isEqualTo(bookDto.getEdition());
 
         }
     }

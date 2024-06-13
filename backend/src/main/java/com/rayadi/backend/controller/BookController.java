@@ -6,6 +6,7 @@ import com.rayadi.backend.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +33,9 @@ public class BookController {
         return ResponseEntity.ok(bookService.addBook(request));
     }
     @PutMapping("/{bookId}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long bookId, @RequestBody BookDto request) {
-        return ResponseEntity.ok(bookService.updateBook(bookId, request));
+    public ResponseEntity<HttpStatus> updateBook(@PathVariable Long bookId,@Valid @RequestBody BookDto request) {
+        bookService.updateBook(bookId, request);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
@@ -46,6 +48,6 @@ public class BookController {
                                                   /*@RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "5") int size*/
     ) {
-        return ResponseEntity.ok(bookService.filterBooks(filters));
+        return new ResponseEntity<>(bookService.filterBooks(filters), HttpStatus.OK);
     }
 }

@@ -4,5 +4,5 @@ import com.rayadi.backend.model.Author;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthorRepo extends JpaRepository<Author, Long> {
-    boolean existsByFullNameIgnoreCase(String fullName);
+    boolean existsByEmail(String email);
 }

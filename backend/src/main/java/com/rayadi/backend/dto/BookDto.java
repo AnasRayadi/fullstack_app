@@ -23,15 +23,16 @@ public class BookDto {
     @NotNull(message = "Description is required")
     @Size(min = 10, message = "Description must be at least 10 characters long")
     private String description;
-    @NotNull
+    @NotNull(message = "Image is required")
     @Pattern(regexp = "(https?://.*\\.(?:png|jpg))", message = "Image must be a valid URL ending with .png or .jpg")
     private String image;
-    @NotNull
+    @NotNull(message = "Edition is required")
     @ValidEditionDate
     private LocalDate edition;
-    @NotNull
+    @NotNull(message = "Category ID is required")
     private Integer categoryId;
-    @NotNull
+    @NotNull(message = "Price is required")
     private double price;
+
 }
 
